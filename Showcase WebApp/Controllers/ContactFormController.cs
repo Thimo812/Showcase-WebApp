@@ -8,7 +8,7 @@ using System.Net;
 namespace Showcase_WebApp.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/[controller]")]
     public class ContactFormController : ControllerBase
     {
         private readonly ILogger _logger;
