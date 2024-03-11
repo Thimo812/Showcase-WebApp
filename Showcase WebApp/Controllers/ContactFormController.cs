@@ -27,5 +27,12 @@ namespace Showcase_WebApp.Controllers
             var responseCode = await _contactFormManager.SendMail(contactForm);
             return new StatusCodeResult(responseCode);
         }
+
+        [HttpGet("Get")]
+
+        public IActionResult Get()
+        {
+            return Ok();
+        }
     }
 }
