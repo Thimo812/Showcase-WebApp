@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Showcase_WebApp.data;
+using Showcase_WebApp.hubs;
+using Showcase_WebApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<DataContext>();
 
+builder.Services.AddSignalR()
+    .AddHubOptions<GameHub>(o => o.MaximumParallelInvocationsPerClient = 5);
+
+builder.Services.AddSingleton(typeof(Connections<>));
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -43,7 +50,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<IdentityUser>();
+app.MapGroup("/api/account").MapIdentityApi<IdentityUser>();
+
+app.MapHub<GameHub>("game-hub");
 
 app.UseHttpsRedirection();
 

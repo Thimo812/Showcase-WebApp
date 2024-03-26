@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Showcase_WebApp.Exceptions;
 using Showcase_WebApp.Managers;
 using Showcase_WebApp.Models;
@@ -26,13 +28,6 @@ namespace Showcase_WebApp.Controllers
         {
             var responseCode = await _contactFormManager.SendMail(contactForm);
             return new StatusCodeResult(responseCode);
-        }
-
-        [HttpGet("Get")]
-
-        public IActionResult Get()
-        {
-            return Ok();
         }
     }
 }
