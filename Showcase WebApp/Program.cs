@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Showcase_WebApp.data;
 using Showcase_WebApp.hubs;
+using Showcase_WebApp.Managers;
 using Showcase_WebApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-
-
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -38,7 +37,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 builder.Services.AddSignalR()
     .AddHubOptions<GameHub>(o => o.MaximumParallelInvocationsPerClient = 5);
 
-builder.Services.AddSingleton(typeof(Connections<>));
+builder.Services.AddSingleton(typeof(GameManager));
 
 builder.Services.AddCors(options =>
 {

@@ -10,17 +10,22 @@ namespace Showcase_WebApp.Managers
 
         private GameDAO _gameDAO;
 
-        private List<GameSessionModel> sessions;
+        public List<GameSessionModel> Sessions { get; private set; }
 
         private Queue<Player> playerQueue;
 
-        public GameManager(GameDAO gameDAO)
+        public GameManager()
         {
-            _gameDAO = gameDAO;
+            _gameDAO = new GameDAO();
 
-            sessions = new List<GameSessionModel>();
+            Sessions = new List<GameSessionModel>();
 
             playerQueue = new Queue<Player>();
+        }
+
+        public async Task RemoveSubscribedEvents()
+        {
+            GameStarted = null;
         }
 
         public async Task QueuePlayer(string connectionID, string userName)
@@ -67,14 +72,14 @@ namespace Showcase_WebApp.Managers
 
             var session = new GameSessionModel(board1, board2);
 
-            sessions.Add(session);
+            Sessions.Add(session);
 
             return session;
         }
 
         private async Task<GameSessionModel> GetSessionFromPlayerID(string connectionID)
         {
-            var session = sessions.First(x => x.GameBoard1.Player.ConnectionID == connectionID || x.GameBoard1.Player.ConnectionID == connectionID);
+            var session = Sessions.First(x => x.GameBoard1.Player.ConnectionID == connectionID || x.GameBoard2.Player.ConnectionID == connectionID);
             return session;
         }
     }

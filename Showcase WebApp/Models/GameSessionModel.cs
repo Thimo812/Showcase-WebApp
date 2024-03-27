@@ -39,11 +39,17 @@ namespace Showcase_WebApp.Models
             {
                 GameBoard1.InsertGuess(word);
             }
-            else if (GameBoard1.Player.ConnectionID == connectionID)
+            else if (GameBoard2.Player.ConnectionID == connectionID)
             {
                 GameBoard2.InsertGuess(word);
             }
             else throw new Exception("Connection ID not found");
+        }
+
+        public async Task RemoveSubscribedEvents()
+        {
+            GameEnded = null;
+            NotifyBoardUpdated = null;
         }
 
         private async void OnBoardUpdated(object? sender, System.EventArgs e)
@@ -57,13 +63,13 @@ namespace Showcase_WebApp.Models
             if (sender is GameBoardModel board)
             {
                 await CalculateScore(board);
-            }
 
-            if (!GameBoard1.IsActive && !GameBoard2.IsActive)
-            {
-                active = false;
+                if (!GameBoard1.IsActive && !GameBoard2.IsActive)
+                {
+                    active = false;
 
-                GameEnded?.Invoke(this, System.EventArgs.Empty);
+                    GameEnded?.Invoke(this, System.EventArgs.Empty);
+                }
             }
         }
 

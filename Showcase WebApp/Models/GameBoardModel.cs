@@ -36,7 +36,7 @@ namespace Showcase_WebApp.Models
             }
         }
 
-        public Guess[] guesses = new Guess[maxTries];
+        public Guess[] Guesses { get; private set; }
 
         public GameBoardModel(string word, Player player)
         {
@@ -44,15 +44,17 @@ namespace Showcase_WebApp.Models
             Player = player;
 
             IsActive = true;
+
+            Guesses = new Guess[maxTries];
         }
 
         public async Task InsertGuess(string word)
         {
-            for (int i = 0; i < guesses.Length; i++)
+            for (int i = 0; i < Guesses.Length; i++)
             {
-                if (guesses[i] == null)
+                if (Guesses[i] == null)
                 {
-                    guesses[i] = CheckWord(word);
+                    Guesses[i] = CheckWord(word);
 
                     Tries++;
 

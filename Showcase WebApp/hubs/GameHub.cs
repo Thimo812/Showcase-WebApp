@@ -11,28 +11,25 @@ namespace Showcase_WebApp.hubs
     {
         private GameManager _gameManager;
 
-        private readonly Connections<GameHub> _connections;
-
-        public GameHub(Connections<GameHub> connections)
+        public GameHub(GameManager gameManager)
         {
-            GameDAO DAO = new GameDAO();
+            _gameManager = gameManager;
 
-            _gameManager = new GameManager(DAO);
-
-            _connections = connections;
-
-            _gameManager.GameStarted += HandleGameStarted;
+            HandleEventListeners();
         }
 
-        private async void HandleGameStarted(object? sender, GameStartedEventArgs args)
+        private async void HandleEventListeners()
         {
-            args.Session.NotifyBoardUpdated += NotifyBoardUpdated;
-            args.Session.GameEnded += NotifyGameEnded;
+            await _gameManager.RemoveSubscribedEvents();
 
-            var player1 = args.Session.GameBoard1.Player;
-            var player2 = args.Session.GameBoard2.Player;
+            _gameManager.GameStarted += NotifyGameStarted;
 
-            await NotifyGameStarted(player1, player2);
+            foreach (var session in _gameManager.Sessions)
+            {
+                await session.RemoveSubscribedEvents();
+                session.NotifyBoardUpdated += NotifyBoardUpdated;
+                session.GameEnded += NotifyGameEnded;
+            }
         }
 
         public async void GuessWord(string word)
@@ -60,22 +57,7 @@ namespace Showcase_WebApp.hubs
             await _gameManager.DequeuePlayer(connectionID);
         }
 
-        public override Task OnConnectedAsync()
-        {
-            _connections.All.TryAdd(Context.ConnectionId, Context);
-
-            return base.OnConnectedAsync();
-        }
-
-        public override Task OnDisconnectedAsync(Exception? exception)
-        {
-            _connections.All.TryRemove(Context.ConnectionId, out _);
-
-            return base.OnDisconnectedAsync(exception);
-        }
-
-
-        private async void NotifyGameEnded(object? sender, System.EventArgs args)
+        private async void NotifyGameEnded(object? sender, EventArgs args)
         {
             GameBoardModel board1;
             GameBoardModel board2;
@@ -87,8 +69,8 @@ namespace Showcase_WebApp.hubs
             }
             else return;
 
-            await Clients.Client(board1.Player.ConnectionID).SendAsync("GameEnded", board1, board2);
-            await Clients.Client(board2.Player.ConnectionID).SendAsync("GameEnded", board1, board2);
+            await Clients.Client(board1.Player.ConnectionID).SendAsync("GameEnded", board1.Guesses, board2.Guesses, board1.Player, board2.Player);
+            await Clients.Client(board2.Player.ConnectionID).SendAsync("GameEnded", board1.Guesses, board2.Guesses, board1.Player, board2.Player);
         }
 
         private async void NotifyBoardUpdated(object? sender, BoardUpdatedEventArgs args)
@@ -103,12 +85,15 @@ namespace Showcase_WebApp.hubs
             }
             else return;
 
-            await Clients.Client(player1.ConnectionID).SendAsync("UpdateBoard", args.Board);
-            await Clients.Client(player2.ConnectionID).SendAsync("UpdateBoard", args.Board);
+            await Clients.Client(player1.ConnectionID).SendAsync("UpdateBoard", args.Board.Player.Name, args.Board.Guesses);
+            await Clients.Client(player2.ConnectionID).SendAsync("UpdateBoard", args.Board.Player.Name, args.Board.Guesses);
         }
 
-        private async Task NotifyGameStarted(Player player1, Player player2)
+        private async void NotifyGameStarted(object? sender, GameStartedEventArgs args)
         {
+            var player1 = args.Session.GameBoard1.Player;
+            var player2 = args.Session.GameBoard2.Player;
+
             await Clients.Client(player2.ConnectionID).SendAsync("GameStarted", player1.Name);
             await Clients.Client(player1.ConnectionID).SendAsync("GameStarted", player2.Name);
         }
@@ -116,6 +101,11 @@ namespace Showcase_WebApp.hubs
         private async Task NotifyInvalidWord(string connectionID)
         {
             await Clients.Client(connectionID).SendAsync("InvalidWord");
+        }
+
+        private async void NotifyError(string connectionID, Exception ex)
+        {
+
         }
     }
 }
