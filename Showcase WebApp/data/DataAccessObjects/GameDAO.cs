@@ -2,22 +2,42 @@
 {
     public class GameDAO
     {
-        public static readonly string _filePath = "/data/DataAccessObjects/wordle_words.txt";
+        public static readonly string allWordsFilePath = "/PossibleWords.txt";
 
-        public List<string> Words { get; private set; }
+        public static readonly string possibleWordsFilePath = "/wordle_words.txt";
+
+        private List<string> possibleWords;
+
+        private List<string> allWords;
 
         public GameDAO()
         {
-            RetrieveWords();
+            RetrievePossibleWords();
+            RetrieveAllWords();
         }
 
-        public async Task RetrieveWords()
+        public async void RetrievePossibleWords()
+        {
+            possibleWords = await RetrieveWords(possibleWordsFilePath);
+        }
+
+        public async void RetrieveAllWords()
+        {
+            allWords = await RetrieveWords(allWordsFilePath);
+
+            foreach (string word in allWords)
+            {
+                await Console.Out.WriteLineAsync(word);
+            }
+        }
+
+        private async Task<List<string>> RetrieveWords(string filePath)
         {
             try
             {
                 string currentPath = Directory.GetCurrentDirectory();
 
-                string fullPath = currentPath + _filePath;
+                string fullPath = currentPath + filePath;
 
                 string fileContent = File.ReadAllText(fullPath);
 
@@ -25,26 +45,28 @@
 
                 List<string> words = new List<string>(fileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries));
 
-                Words = words;
+                return words;
             }
             catch (Exception ex)
             {
                 await Console.Out.WriteLineAsync("De data kon niet uitgelezen worden: " + ex.Message);
+                return new List<string>();
+
             }
         }
 
         public async Task<bool> CheckWord(string word)
         {
-            return Words.Contains(word);
+            return allWords.Contains(word);
         }
 
         public async Task<string> GetRandomWord()
         {
             Random random = new();
 
-            int randomIndex = random.Next(0, Words.Count);
+            int randomIndex = random.Next(0, possibleWords.Count);
 
-            return Words[randomIndex];
+            return possibleWords[randomIndex];
         }
 
     }

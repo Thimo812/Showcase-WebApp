@@ -22,7 +22,8 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins("http://127.0.0.1:5501")
                    .AllowAnyHeader()
-                   .AllowAnyMethod();
+                   .AllowAnyMethod()
+                   .AllowCredentials();
         });
 });
 
@@ -39,17 +40,6 @@ builder.Services.AddSignalR()
 
 builder.Services.AddSingleton(typeof(GameManager));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.WithOrigins("http://127.0.0.1:5501")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,15 +49,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowSpecificOrigin");
+
 app.MapGroup("/api/account").MapIdentityApi<IdentityUser>();
 
 app.MapHub<GameHub>("game-hub");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-app.UseCors("AllowSpecificOrigin");
 
 app.MapControllers();
 

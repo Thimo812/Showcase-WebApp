@@ -4,6 +4,7 @@ using Showcase_WebApp.data.DataAccessObjects;
 using Showcase_WebApp.Managers;
 using Showcase_WebApp.Models;
 using Showcase_WebApp.Models.EventArgs;
+using System.Diagnostics;
 
 namespace Showcase_WebApp.hubs
 {
@@ -105,7 +106,7 @@ namespace Showcase_WebApp.hubs
 
         private async void NotifyError(string connectionID, Exception ex)
         {
-
+            //await Clients.Client(connectionId).SendAsync()
         }
     }
 }
