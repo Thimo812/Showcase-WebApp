@@ -1,0 +1,16 @@
+{
+  "version": "2.2.0",
+  "summary": {
+    "title": "New Threat Model",
+    "owner": "Thimo",
+    "description": "Dit is de REST API die wordt gebruikt voor de showcase",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [],
+    "diagramTop": 1,
+    "reviewer": "Thimo",
+    "threatTop": 0
+  }
+}
