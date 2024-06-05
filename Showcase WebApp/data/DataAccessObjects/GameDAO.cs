@@ -1,4 +1,6 @@
-﻿namespace Showcase_WebApp.data.DataAccessObjects
+﻿using System.Diagnostics;
+
+namespace Showcase_WebApp.data.DataAccessObjects
 {
     public class GameDAO
     {
@@ -8,7 +10,7 @@
 
         private List<string> possibleWords;
 
-        private List<string> allWords;
+        public List<string> allWords;
 
         public GameDAO()
         {
@@ -24,11 +26,6 @@
         public async void RetrieveAllWords()
         {
             allWords = await RetrieveWords(allWordsFilePath);
-
-            foreach (string word in allWords)
-            {
-                await Console.Out.WriteLineAsync(word);
-            }
         }
 
         private async Task<List<string>> RetrieveWords(string filePath)
@@ -57,7 +54,7 @@
 
         public async Task<bool> CheckWord(string word)
         {
-            return allWords.Contains(word);
+            return allWords.Contains(word.ToUpper());
         }
 
         public async Task<string> GetRandomWord()

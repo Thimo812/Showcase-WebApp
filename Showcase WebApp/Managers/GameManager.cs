@@ -14,9 +14,9 @@ namespace Showcase_WebApp.Managers
 
         private Queue<Player> playerQueue;
 
-        public GameManager()
+        public GameManager(GameDAO gameDAO)
         {
-            _gameDAO = new GameDAO();
+            _gameDAO = gameDAO;
 
             Sessions = new List<GameSessionModel>();
 
@@ -79,7 +79,7 @@ namespace Showcase_WebApp.Managers
 
         private async Task<GameSessionModel> GetSessionFromPlayerID(string connectionID)
         {
-            var session = Sessions.First(x => x.GameBoard1.Player.ConnectionID == connectionID || x.GameBoard2.Player.ConnectionID == connectionID);
+            var session = Sessions.FirstOrDefault(x => x.GameBoard1.Player.ConnectionID == connectionID || x.GameBoard2.Player.ConnectionID == connectionID);
             return session;
         }
     }

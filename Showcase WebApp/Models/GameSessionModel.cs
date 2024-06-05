@@ -9,6 +9,8 @@ namespace Showcase_WebApp.Models
 
         public event EventHandler<BoardUpdatedEventArgs> NotifyBoardUpdated;
 
+        public event EventHandler<BoardUpdatedEventArgs> NotifyBoardFull;
+
         public GameBoardModel GameBoard1 { get; set; }
 
         public GameBoardModel GameBoard2 { get; set; }
@@ -27,6 +29,18 @@ namespace Showcase_WebApp.Models
 
             GameBoard1.BoardFull += CheckGame;
             GameBoard2.BoardFull += CheckGame;
+
+            GameBoard1.BoardFull += (sender, args) =>
+            {
+                if (sender is GameBoardModel board)
+                    NotifyBoardFull?.Invoke(this, new BoardUpdatedEventArgs(board));
+            };
+
+            GameBoard2.BoardFull += (sender, args) =>
+            {
+                if (sender is GameBoardModel board)
+                    NotifyBoardFull?.Invoke(this, new BoardUpdatedEventArgs(board));
+            };
 
             active = true;
 
@@ -50,6 +64,7 @@ namespace Showcase_WebApp.Models
         {
             GameEnded = null;
             NotifyBoardUpdated = null;
+            NotifyBoardFull = null;
         }
 
         private async void OnBoardUpdated(object? sender, System.EventArgs e)

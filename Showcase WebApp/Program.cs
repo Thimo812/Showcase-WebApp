@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Showcase_WebApp.data;
+using Showcase_WebApp.data.DataAccessObjects;
 using Showcase_WebApp.hubs;
 using Showcase_WebApp.Managers;
 using Showcase_WebApp.Models;
@@ -39,6 +40,7 @@ builder.Services.AddSignalR()
     .AddHubOptions<GameHub>(o => o.MaximumParallelInvocationsPerClient = 5);
 
 builder.Services.AddSingleton(typeof(GameManager));
+builder.Services.AddSingleton(typeof(GameDAO));
 
 var app = builder.Build();
 

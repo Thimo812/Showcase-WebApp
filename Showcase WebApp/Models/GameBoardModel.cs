@@ -58,7 +58,7 @@ namespace Showcase_WebApp.Models
 
                     Tries++;
 
-                    if (Word.Equals(word)) IsActive = false;
+                    if (Word.Equals(word) || i == maxTries - 1) IsActive = false;
 
                     else BoardUpdated.Invoke(this, System.EventArgs.Empty);
 
