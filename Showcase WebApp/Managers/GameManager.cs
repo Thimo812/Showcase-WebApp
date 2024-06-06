@@ -28,11 +28,13 @@ namespace Showcase_WebApp.Managers
             GameStarted = null;
         }
 
-        public async Task QueuePlayer(string connectionID, string userName)
+        public async Task<bool> QueuePlayer(string connectionID, string userName)
         {
+            if (playerQueue.Any(Player => Player.Name == userName)) throw new Exception("player already in queue");
+
             playerQueue.Enqueue(new Player(userName, connectionID));
 
-            if (playerQueue.Count < 2) return;
+            if (playerQueue.Count < 2) return false;
 
             Player player1 = playerQueue.Dequeue();
             Player player2 = playerQueue.Dequeue();
@@ -40,6 +42,8 @@ namespace Showcase_WebApp.Managers
             var session = await StartSession(player1, player2);
 
             GameStarted.Invoke(this, new GameStartedEventArgs(session));
+
+            return true;
         }
 
         public async Task DequeuePlayer(string connectionID)

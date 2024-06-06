@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Identity.Client;
 using Showcase_WebApp.data.DataAccessObjects;
 using Showcase_WebApp.Managers;
@@ -8,6 +9,7 @@ using System.Diagnostics;
 
 namespace Showcase_WebApp.hubs
 {
+    [Authorize]
     public class GameHub : Hub
     {
         private GameManager _gameManager;
@@ -50,7 +52,13 @@ namespace Showcase_WebApp.hubs
         {
             string connectionID = Context.ConnectionId;
 
-            await _gameManager.QueuePlayer(connectionID, userName);
+            try
+            {
+                bool gameStarted = await _gameManager.QueuePlayer(connectionID, userName);
+
+                if (!gameStarted) await Clients.Client(connectionID).SendAsync("OnPlayerEnqueued");
+            }
+            catch(Exception ex) { }
         }
 
         public async Task CancelFindGame()
