@@ -13,5 +13,15 @@ namespace Showcase_WebApp.Models
         {
             Letters = letters;
         }
+
+        public override string ToString()
+        {
+            var returnString = "";
+            foreach (var letter in Letters)
+            {
+                returnString += letter.Key;
+            }
+            return returnString;
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace Showcase_WebApp.Controllers
         }
 
         [HttpGet("GetAllUsers")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllUsers([FromServices] IServiceProvider sp)
         {
             var userManager = sp.GetRequiredService<UserManager<IdentityUser>>();
@@ -82,7 +82,7 @@ namespace Showcase_WebApp.Controllers
         }
 
         [HttpPost("UpdateUserRole")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Update([FromBody] UserRoleUpdate roleUpdate, [FromServices] IServiceProvider sp)
         {
             if (!ModelState.IsValid) return BadRequest();

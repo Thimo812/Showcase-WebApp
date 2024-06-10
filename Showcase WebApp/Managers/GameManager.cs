@@ -41,7 +41,7 @@ namespace Showcase_WebApp.Managers
 
             var session = await StartSession(player1, player2);
 
-            GameStarted.Invoke(this, new GameStartedEventArgs(session));
+            GameStarted?.Invoke(this, new GameStartedEventArgs(session));
 
             return true;
         }

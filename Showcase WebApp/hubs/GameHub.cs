@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Showcase_WebApp.hubs
 {
-    [Authorize(Roles = "gameUser, Admin")]
+    [Authorize(Roles = "gameUser, admin")]
     public class GameHub : Hub
     {
         private GameManager _gameManager;
